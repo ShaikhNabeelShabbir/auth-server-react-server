@@ -3,16 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 interface CreateTokenProps {
-  onCreateToken: (token_address: string, balance: number) => void;
+  token: string;
 }
 
-const CreateToken: React.FC<CreateTokenProps> = ({ onCreateToken }) => {
+const CreateToken: React.FC<CreateTokenProps> = ({ token }) => {
   const [token_address, settoken_address] = useState("");
   const [balance, setBalance] = useState(0);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const token = sessionStorage.getItem("token");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +26,6 @@ const CreateToken: React.FC<CreateTokenProps> = ({ onCreateToken }) => {
       );
 
       if (response.status === 200) {
-        onCreateToken(token_address, balance);
         alert("Token created successfully");
         settoken_address("");
         setBalance(0);
@@ -46,7 +43,7 @@ const CreateToken: React.FC<CreateTokenProps> = ({ onCreateToken }) => {
       <h2>Create Token</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Token token_address:</label>
+          <label>Token Address:</label>
           <input
             type="text"
             value={token_address}

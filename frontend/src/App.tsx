@@ -78,7 +78,7 @@ const App: React.FC = () => {
   const handleChangePassword = async (newPassword: string) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/change-password",
+        "http://localhost:5000/auth/reset-password",
         { password: newPassword },
         {
           headers: {
@@ -99,29 +99,6 @@ const App: React.FC = () => {
       }
     } catch (error) {
       console.error("Change password error:", error);
-    }
-  };
-
-  const handleCreateToken = async (address: string, balance: number) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/token/create",
-        { address, balance },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        console.log(`Token created: ${address} with balance ${balance}`);
-        alert("Token created successfully");
-      } else {
-        console.error("Create token failed:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Create token error:", error);
     }
   };
 
@@ -183,10 +160,7 @@ const App: React.FC = () => {
               />
             }
           />
-          <Route
-            path="/create-token"
-            element={<CreateToken onCreateToken={handleCreateToken} />}
-          />
+          <Route path="/create-token" element={<CreateToken token={token} />} />
           <Route path="/view-tokens" element={<ViewTokens />} />
           <Route path="/delete-token" element={<DeleteToken />} />
           <Route path="/update-token" element={<UpdateToken />} />
