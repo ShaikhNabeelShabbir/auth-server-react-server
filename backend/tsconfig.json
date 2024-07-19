@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2020" /* Target ECMAScript version */,
+    "module": "commonjs" /* Module system */,
+    "strict": true /* Enable all strict type-checking options */,
+    "esModuleInterop": true /* Enable emit interoperability between CommonJS and ES Modules */,
+    "skipLibCheck": true /* Skip type checking of declaration files */,
+    "forceConsistentCasingInFileNames": true /* Ensure consistency in file names */,
+    "outDir": "./dist" /* Output directory for compiled files */,
+    "rootDir": "./src" /* Root directory of source files */,
+    "resolveJsonModule": true /* Allow importing JSON modules */,
+    "baseUrl": "./src" /* Base directory to resolve non-relative module names */,
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"] /* Custom path mappings */
+    }
+  },
+  "include": ["src/**/*.ts" /* Include TypeScript files */],
+  "exclude": [
+    "node_modules" /* Exclude node_modules */,
+    "dist" /* Exclude output directory */
+  ]
+}
