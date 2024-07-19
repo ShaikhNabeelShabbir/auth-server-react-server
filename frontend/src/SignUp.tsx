@@ -3,16 +3,11 @@ import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import axios from "axios";
 
-interface User {
-  email: string;
-  password: string;
-}
-
 interface SignUpProps {
-  onRegister: (user: User) => void;
+  onRegisterSuccess: (user: { email: string; password: string }) => void;
 }
 
-const SignUp: React.FC<SignUpProps> = ({ onRegister }) => {
+const SignUp: React.FC<SignUpProps> = ({ onRegisterSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -42,8 +37,8 @@ const SignUp: React.FC<SignUpProps> = ({ onRegister }) => {
         });
 
         if (response.status === 200) {
-          onRegister({ email, password });
-          alert("sign up successfully");
+          onRegisterSuccess({ email, password });
+          alert("Sign up successful");
           setEmail(""); // Clear email
           setPassword(""); // Clear password
           setConfirmPassword(""); // Clear confirm password
@@ -92,7 +87,7 @@ const SignUp: React.FC<SignUpProps> = ({ onRegister }) => {
             required
           />
         </div>
-        {error && <span>{error}</span>}
+        {error && <span className="error">{error}</span>}
         <button type="submit">Sign Up</button>
       </form>
     </div>

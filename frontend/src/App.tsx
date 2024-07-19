@@ -9,7 +9,6 @@ import ViewTokens from "./ViewTokens";
 import DeleteToken from "./DeleteToken";
 import UpdateToken from "./UpdateToken"; // Import the new component
 import "./styles.css";
-import axios from "axios";
 
 interface User {
   email: string;
@@ -37,33 +36,19 @@ const App: React.FC = () => {
     return savedToken || "";
   });
 
-  const handleRegister = (user: User) => {
+  const handleRegisterSuccess = (user: User) => {
     const updatedUsers = [...users, user];
     setUsers(updatedUsers);
     sessionStorage.setItem("users", JSON.stringify(updatedUsers));
   };
 
-  const handleLogin = async (email: string, password: string) => {
-    try {
-      const response = await axios.post("http://localhost:5000/auth/signin", {
-        email,
-        password,
-      });
-
-      if (response.status === 200) {
-        const { token } = response.data;
-        setLoggedIn(true);
-        setUsername(email);
-        setToken(token);
-        sessionStorage.setItem("loggedIn", JSON.stringify(true));
-        sessionStorage.setItem("username", email);
-        sessionStorage.setItem("token", token);
-      } else {
-        console.error("Login failed:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+  const handleLoginSuccess = (email: string, token: string) => {
+    setLoggedIn(true);
+    setUsername(email);
+    setToken(token);
+    sessionStorage.setItem("loggedIn", JSON.stringify(true));
+    sessionStorage.setItem("username", email);
+    sessionStorage.setItem("token", token);
   };
 
   const handleLogout = () => {
@@ -73,33 +58,6 @@ const App: React.FC = () => {
     sessionStorage.removeItem("loggedIn");
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("token");
-  };
-
-  const handleChangePassword = async (newPassword: string) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/auth/reset-password",
-        { password: newPassword },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        const updatedUsers = users.map((user) =>
-          user.email === username ? { ...user, password: newPassword } : user
-        );
-        setUsers(updatedUsers);
-        sessionStorage.setItem("users", JSON.stringify(updatedUsers));
-        alert("Password changed successfully");
-      } else {
-        console.error("Change password failed:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Change password error:", error);
-    }
   };
 
   return (
@@ -143,22 +101,20 @@ const App: React.FC = () => {
       <Routes>
         {!loggedIn && (
           <>
-            <Route path="/" element={<SignUp onRegister={handleRegister} />} />
+            <Route
+              path="/"
+              element={<SignUp onRegisterSuccess={handleRegisterSuccess} />}
+            />
             <Route
               path="/login"
-              element={<Login users={users} onLogin={handleLogin} />}
+              element={<Login onLoginSuccess={handleLoginSuccess} />}
             />
           </>
         )}
         <Route element={<PrivateRoutes loggedIn={loggedIn} />}>
           <Route
             path="/change-password"
-            element={
-              <ChangePassword
-                onChangePassword={handleChangePassword}
-                currentUser={username}
-              />
-            }
+            element={<ChangePassword token={token} currentUser={username} />}
           />
           <Route path="/create-token" element={<CreateToken token={token} />} />
           <Route path="/view-tokens" element={<ViewTokens />} />

@@ -3,17 +3,11 @@ import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import axios from "axios";
 
-interface User {
-  email: string;
-  password: string;
-}
-
 interface LoginProps {
-  users: User[];
-  onLogin: (email: string, password: string) => void;
+  onLoginSuccess: (email: string, token: string) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,7 +22,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       });
 
       if (response.status === 200) {
-        onLogin(email, password);
+        const { token } = response.data;
+        onLoginSuccess(email, token);
         navigate("/"); // Navigate to home page or any other route after login
       } else {
         setError(response.data.message || "Failed to login");
@@ -60,7 +55,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             required
           />
         </div>
-        {error && <span>{error}</span>}
+        {error && <span className="error">{error}</span>}
         <button type="submit">Login</button>
       </form>
     </div>

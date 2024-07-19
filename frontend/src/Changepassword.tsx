@@ -3,12 +3,12 @@ import axios from "axios";
 import "./styles.css";
 
 interface ChangePasswordProps {
-  onChangePassword: (newPassword: string) => void;
+  token: string;
   currentUser: string;
 }
 
 const ChangePassword: React.FC<ChangePasswordProps> = ({
-  onChangePassword,
+  token,
   currentUser,
 }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -31,13 +31,20 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
           email: currentUser,
           currentPassword,
           newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       if (response.status === 200) {
-        onChangePassword(newPassword);
         setSuccess("Password changed successfully");
         setError("");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
       } else {
         setError(response.data.message || "Failed to change password");
       }
