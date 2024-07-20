@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import SignUp from "./SignUp";
-import Login from "./Login";
-import PrivateRoutes from "./PrivateRoute";
-import ChangePassword from "./Changepassword";
-import CreateToken from "./CreateToken";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
+import PrivateRoutes from "./components/PrivateRoute";
+import ChangePassword from "./pages/Changepassword";
+import CreateToken from "./pages/CreateToken";
 import ViewTokens from "./ViewTokens";
-import DeleteToken from "./DeleteToken";
-import UpdateToken from "./UpdateToken"; // Import the new component
+import DeleteToken from "./pages/DeleteToken";
+import UpdateToken from "./pages/UpdateToken"; // Import the new component
 import "./styles.css";
 
 interface User {
