@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import PrivateRoutes from "./components/PrivateRoute";
 import ChangePassword from "./pages/Changepassword";
 import CreateToken from "./pages/CreateToken";
-import ViewTokens from "./ViewTokens";
+import ViewTokens from "./pages/ViewTokens";
 import DeleteToken from "./pages/DeleteToken";
 import UpdateToken from "./pages/UpdateToken"; // Import the new component
 import "./styles.css";
