@@ -1,42 +1,54 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import { createToken } from "../api/api"; // Import the API function
 
 interface CreateTokenProps {
   token: string;
 }
 
+interface TokenData {
+  tokenAddress: string;
+  balance: number;
+}
+
 const CreateToken: React.FC<CreateTokenProps> = ({ token }) => {
-  const [tokenAddress, setTokenAddress] = useState("");
-  const [balance, setBalance] = useState(0);
-  const [error, setError] = useState("");
+  const tokenAddressRef = useRef<HTMLInputElement | null>(null);
+  const balanceRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:5000/auth/tokens", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ token_address: tokenAddress, balance }),
-      });
+  const mutation: UseMutationResult<any, Error, TokenData> = useMutation({
+    mutationFn: (newTokenData: TokenData) =>
+      createToken(token, newTokenData.tokenAddress, newTokenData.balance),
+    onMutate: () => {
+      setLoading(true);
+      setError("");
+    },
+    onSuccess: () => {
+      alert("Token created successfully");
+      if (tokenAddressRef.current) tokenAddressRef.current.value = "";
+      if (balanceRef.current) balanceRef.current.value = "0";
+      setLoading(false);
+      navigate("/");
+    },
+    onError: (error: any) => {
+      setError(error.message || "Failed to create token");
+      setLoading(false);
+    },
+  });
 
-      if (response.ok) {
-        alert("Token created successfully");
-        setTokenAddress("");
-        setBalance(0);
-        navigate("/"); // Navigate to home route after token creation
-      } else {
-        const data = await response.json();
-        setError(data.message || "Failed to create token");
-      }
-    } catch (error) {
-      console.error("Error creating token:", error);
-      setError("Failed to create token");
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (tokenAddressRef.current && balanceRef.current) {
+      mutation.mutate({
+        tokenAddress: tokenAddressRef.current.value,
+        balance: Number(balanceRef.current.value),
+      });
     }
   };
+
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <div className="container">
@@ -44,24 +56,16 @@ const CreateToken: React.FC<CreateTokenProps> = ({ token }) => {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Token Address:</label>
-          <input
-            type="text"
-            value={tokenAddress}
-            onChange={(e) => setTokenAddress(e.target.value)}
-            required
-          />
+          <input type="text" ref={tokenAddressRef} required />
         </div>
         <div>
           <label>Balance:</label>
-          <input
-            type="number"
-            value={balance}
-            onChange={(e) => setBalance(Number(e.target.value))}
-            required
-          />
+          <input type="number" ref={balanceRef} required />
         </div>
-        {error && <span>{error}</span>}
-        <button type="submit">Create Token</button>
+        {error && <span className="error">{error}</span>}
+        <button type="submit" disabled={loading}>
+          {loading ? "Creating..." : "Create Token"}
+        </button>
       </form>
     </div>
   );
