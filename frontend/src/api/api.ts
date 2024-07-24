@@ -38,3 +38,46 @@ export const deleteToken = async (
 
   return response.json();
 };
+
+export const updateToken = async (
+  token: string,
+  tokenId: number,
+  tokenAddress: string,
+  balance: number
+): Promise<any> => {
+  const response = await fetch(`http://localhost:5000/auth/tokens/${tokenId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ token_address: tokenAddress, balance }),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message || "Failed to update token");
+  }
+
+  return response.json();
+};
+
+export interface Token {
+  id: number;
+  token_address: string;
+  balance: number;
+}
+export const fetchTokens = async (token: string): Promise<Token[]> => {
+  const response = await fetch("http://localhost:5000/auth/tokens", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message || "Failed to fetch tokens");
+  }
+
+  return response.json();
+};

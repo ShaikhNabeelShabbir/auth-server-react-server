@@ -1,53 +1,51 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import { updateToken } from "../api/api"; // Import the API function
 
 const UpdateToken: React.FC = () => {
-  const [tokenId, setTokenId] = useState<number | "">("");
-  const [tokenAddress, setTokenAddress] = useState("");
-  const [balance, setBalance] = useState<number | "">("");
-  const [message, setMessage] = useState<string>("");
+  const tokenIdRef = useRef<HTMLInputElement | null>(null);
+  const tokenAddressRef = useRef<HTMLInputElement | null>(null);
+  const balanceRef = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
-  const handleUpdate = async (e: React.FormEvent) => {
+  const mutation: UseMutationResult<
+    any,
+    Error,
+    { tokenId: number; tokenAddress: string; balance: number }
+  > = useMutation({
+    mutationFn: ({ tokenId, tokenAddress, balance }) => {
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+      return updateToken(token, tokenId, tokenAddress, balance);
+    },
+    onMutate: () => {
+      setLoading(true);
+      setError("");
+    },
+    onSuccess: () => {
+      setMessage("Token updated successfully");
+      if (tokenIdRef.current) tokenIdRef.current.value = "";
+      if (tokenAddressRef.current) tokenAddressRef.current.value = "";
+      if (balanceRef.current) balanceRef.current.value = "0";
+      setLoading(false);
+    },
+    onError: (error: any) => {
+      setError(error.message || "Failed to update token");
+      setLoading(false);
+    },
+  });
+
+  const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Ensure all fields are filled
-    if (!tokenId || !tokenAddress || balance === "") {
-      setError("Please fill all fields");
-      return;
-    }
-
-    try {
-      const authToken = sessionStorage.getItem("token");
-
-      if (!authToken) {
-        setError("No authentication token found");
-        return;
-      }
-
-      const response = await fetch(
-        `http://localhost:5000/auth/tokens/${tokenId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
-          },
-          body: JSON.stringify({ token_address: tokenAddress, balance }),
-        }
-      );
-
-      if (response.ok) {
-        setMessage("Token updated successfully");
-        setTokenId("");
-        setTokenAddress("");
-        setBalance("");
-      } else {
-        const data = await response.json();
-        setError(data.message || "Failed to update token");
-      }
-    } catch (error) {
-      console.error("Error updating token:", error);
-      setError("Failed to update token");
+    if (tokenIdRef.current && tokenAddressRef.current && balanceRef.current) {
+      const tokenId = Number(tokenIdRef.current.value);
+      const tokenAddress = tokenAddressRef.current.value;
+      const balance = Number(balanceRef.current.value);
+      mutation.mutate({ tokenId, tokenAddress, balance });
     }
   };
 
@@ -57,35 +55,22 @@ const UpdateToken: React.FC = () => {
       <form onSubmit={handleUpdate}>
         <div>
           <label>Token ID:</label>
-          <input
-            type="number"
-            value={tokenId}
-            onChange={(e) => setTokenId(Number(e.target.value))}
-            required
-          />
+          <input type="number" ref={tokenIdRef} required />
         </div>
         <div>
           <label>Token Address:</label>
-          <input
-            type="text"
-            value={tokenAddress}
-            onChange={(e) => setTokenAddress(e.target.value)}
-            required
-          />
+          <input type="text" ref={tokenAddressRef} required />
         </div>
         <div>
           <label>New Balance:</label>
-          <input
-            type="number"
-            value={balance}
-            onChange={(e) => setBalance(Number(e.target.value))}
-            required
-          />
+          <input type="number" ref={balanceRef} required />
         </div>
-        <button type="submit">Update Token</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Updating..." : "Update Token"}
+        </button>
       </form>
       {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };
