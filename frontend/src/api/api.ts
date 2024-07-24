@@ -19,3 +19,22 @@ export const createToken = async (
 
   return response.json();
 };
+
+export const deleteToken = async (
+  token: string,
+  tokenId: number
+): Promise<any> => {
+  const response = await fetch(`http://localhost:5000/auth/tokens/${tokenId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message || "Failed to delete token");
+  }
+
+  return response.json();
+};

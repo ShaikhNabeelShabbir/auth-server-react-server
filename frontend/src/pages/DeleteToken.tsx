@@ -1,40 +1,41 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import { deleteToken } from "../api/api"; // Import the API function
 
 const DeleteToken: React.FC = () => {
-  const [tokenId, setTokenId] = useState<number | "">("");
-  const [message, setMessage] = useState<string>("");
+  const tokenIdRef = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
-  const handleDelete = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
+  const mutation: UseMutationResult<any, Error, number> = useMutation({
+    mutationFn: (tokenId: number) => {
       const token = sessionStorage.getItem("token");
-
       if (!token) {
-        setError("No authentication token found");
-        return;
+        throw new Error("No authentication token found");
       }
+      return deleteToken(token, tokenId);
+    },
+    onMutate: () => {
+      setLoading(true);
+      setError("");
+    },
+    onSuccess: () => {
+      setMessage("Token deleted successfully");
+      if (tokenIdRef.current) tokenIdRef.current.value = "";
+      setLoading(false);
+    },
+    onError: (error: any) => {
+      setError(error.message || "Failed to delete token");
+      setLoading(false);
+    },
+  });
 
-      const response = await fetch(
-        `http://localhost:5000/auth/tokens/${tokenId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        setMessage("Token deleted successfully");
-        setTokenId("");
-      } else {
-        const data = await response.json();
-        setError(data.message || "Failed to delete token");
-      }
-    } catch (error) {
-      console.error("Error deleting token:", error);
-      setError("Failed to delete token");
+  const handleDelete = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (tokenIdRef.current) {
+      const tokenId = Number(tokenIdRef.current.value);
+      mutation.mutate(tokenId);
     }
   };
 
@@ -44,17 +45,14 @@ const DeleteToken: React.FC = () => {
       <form onSubmit={handleDelete}>
         <div>
           <label>Token ID:</label>
-          <input
-            type="number"
-            value={tokenId}
-            onChange={(e) => setTokenId(Number(e.target.value))}
-            required
-          />
+          <input type="number" ref={tokenIdRef} required />
         </div>
-        <button type="submit">Delete Token</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Deleting..." : "Delete Token"}
+        </button>
       </form>
       {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };
