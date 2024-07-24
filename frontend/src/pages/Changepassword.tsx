@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { changePassword } from "../api/api"; // Import the API function
 import "../styles.css";
 
 interface ChangePasswordProps {
@@ -16,43 +18,33 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const mutation = useMutation({
+    mutationFn: (data: {
+      email: string;
+      currentPassword: string;
+      newPassword: string;
+    }) =>
+      changePassword(data.email, data.currentPassword, data.newPassword, token),
+    onSuccess: () => {
+      setSuccess("Password changed successfully");
+      setError("");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    },
+    onError: (error: any) => {
+      setError(error.message || "Failed to change password");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newPassword !== confirmNewPassword) {
       setError("New passwords do not match");
       return;
     }
 
-    try {
-      const response = await fetch(
-        "http://localhost:5000/auth/reset-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            email: currentUser,
-            currentPassword,
-            newPassword,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        setSuccess("Password changed successfully");
-        setError("");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-      } else {
-        const data = await response.json();
-        setError(data.message || "Failed to change password");
-      }
-    } catch (error) {
-      setError("Failed to change password");
-    }
+    mutation.mutate({ email: currentUser, currentPassword, newPassword });
   };
 
   return (

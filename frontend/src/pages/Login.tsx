@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { signIn } from "../api/api"; // Import the API function
 import "../styles.css";
 
 interface LoginProps {
@@ -12,29 +14,21 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:5000/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  const mutation = useMutation({
+    mutationFn: (user: { email: string; password: string }) =>
+      signIn(user.email, user.password),
+    onSuccess: (data) => {
+      onLoginSuccess(email, data.token);
+      navigate("/"); // Navigate to home page or any other route after login
+    },
+    onError: (error: any) => {
+      setError(error.message || "Failed to login");
+    },
+  });
 
-      if (response.ok) {
-        const data = await response.json();
-        const { token } = data;
-        onLoginSuccess(email, token);
-        navigate("/"); // Navigate to home page or any other route after login
-      } else {
-        const data = await response.json();
-        setError(data.message || "Failed to login");
-      }
-    } catch (error) {
-      setError("Failed to login");
-    }
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutation.mutate({ email, password });
   };
 
   return (

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { signUp } from "../api/api"; // Import the API function
 import "../styles.css";
 
 interface SignUpProps {
@@ -26,32 +28,26 @@ const SignUp: React.FC<SignUpProps> = ({ onRegisterSuccess }) => {
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const mutation = useMutation({
+    mutationFn: (user: { email: string; password: string }) =>
+      signUp(user.email, user.password),
+    onSuccess: () => {
+      onRegisterSuccess({ email, password });
+      alert("Sign up successful");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      navigate("/login");
+    },
+    onError: (error: any) => {
+      setError(error.message || "Failed to register");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validate()) {
-      try {
-        const response = await fetch("http://localhost:5000/auth/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        });
-
-        if (response.ok) {
-          onRegisterSuccess({ email, password });
-          alert("Sign up successful");
-          setEmail(""); // Clear email
-          setPassword(""); // Clear password
-          setConfirmPassword(""); // Clear confirm password
-          navigate("/login"); // Navigate to login page
-        } else {
-          const data = await response.json();
-          setError(data.message || "Failed to register");
-        }
-      } catch (error) {
-        setError("Failed to register");
-      }
+      mutation.mutate({ email, password });
     }
   };
 
