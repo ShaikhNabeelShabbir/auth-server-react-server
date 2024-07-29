@@ -9,7 +9,25 @@ import ViewTokens from "./pages/ViewTokens";
 import DeleteToken from "./pages/DeleteToken";
 import UpdateToken from "./pages/UpdateToken"; // Import the new component
 import "./styles.css";
-
+import { Button } from "./components/ui/button";
+import { Badge } from "@/components/ui/badge"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 interface User {
   email: string;
   password: string;
@@ -62,38 +80,47 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="container">
+      <div className="container text-xl">
         <h3>Welcome to the App</h3>
         {loggedIn ? (
           <>
-            <p>You are logged in as {username}</p>
-            <button onClick={handleLogout}>Logout</button>
+            <p>You are logged in as <br /><Badge variant="outline">{username}</Badge></p>
             <br />
+            <Button onClick={handleLogout}>Logout</Button>
+            <br />
+            <Accordion type="single" collapsible>
+            <AccordionItem value="item-1">
+            <AccordionTrigger>Options?</AccordionTrigger>
+            <AccordionContent>
             <Link to="/change-password">
-              <button>Change Password</button>
+              <Button>Change Password</Button>
             </Link>
+
             <Link to="/create-token">
-              <button>Create Token</button>
+              <Button>Create Token</Button>
             </Link>
             <Link to="/view-tokens">
-              <button>View Tokens</button>
+              <Button>View Tokens</Button>
             </Link>
             <Link to="/delete-token">
-              <button>Delete Token</button>
+              <Button>Delete Token</Button>
             </Link>
             <Link to="/update-token">
-              <button>Update Token</button>
+              <Button>Update Token</Button>
             </Link>
+            </AccordionContent>
+            </AccordionItem>
+            </Accordion>
           </>
         ) : (
           <>
             <p>Already a user?</p>
             <Link to="/login">
-              <button>Login</button>
+              <Button>Login</Button>
             </Link>
             <br />
             <Link to="/">
-              <button>Signup</button>
+              <Button>Signup</Button>
             </Link>
           </>
         )}

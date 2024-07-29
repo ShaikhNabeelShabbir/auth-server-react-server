@@ -3,7 +3,7 @@ export const createToken = async (
   tokenAddress: string,
   balance: number
 ): Promise<any> => {
-  const response = await fetch("http://localhost:5000/auth/tokens", {
+  const response = await fetch("http://localhost:3000/auth/tokens", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -24,7 +24,7 @@ export const deleteToken = async (
   token: string,
   tokenId: number
 ): Promise<any> => {
-  const response = await fetch(`http://localhost:5000/auth/tokens/${tokenId}`, {
+  const response = await fetch(`http://localhost:3000/auth/tokens/${tokenId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -45,7 +45,7 @@ export const updateToken = async (
   tokenAddress: string,
   balance: number
 ): Promise<any> => {
-  const response = await fetch(`http://localhost:5000/auth/tokens/${tokenId}`, {
+  const response = await fetch(`http://localhost:3000/auth/tokens/${tokenId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export interface Token {
   balance: number;
 }
 export const fetchTokens = async (token: string): Promise<Token[]> => {
-  const response = await fetch("http://localhost:5000/auth/tokens", {
+  const response = await fetch("http://localhost:3000/auth/tokens", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -83,7 +83,7 @@ export const fetchTokens = async (token: string): Promise<Token[]> => {
 };
 
 export const signUp = async (email: string, password: string): Promise<any> => {
-  const response = await fetch("http://localhost:5000/auth/signup", {
+  const response = await fetch("http://localhost:3000/auth/signup", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export const signIn = async (
   email: string,
   password: string
 ): Promise<{ token: string }> => {
-  const response = await fetch("http://localhost:5000/auth/signin", {
+  const response = await fetch("http://localhost:3000/auth/signin", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export const changePassword = async (
   newPassword: string,
   token: string
 ): Promise<any> => {
-  const response = await fetch("http://localhost:5000/auth/reset-password", {
+  const response = await fetch("http://localhost:3000/auth/reset-password", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

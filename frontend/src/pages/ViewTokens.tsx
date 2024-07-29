@@ -25,12 +25,14 @@ const ViewTokens: React.FC = () => {
   return (
     <div className="container">
       <h2>Your Tokens</h2>
-      <ul>
+      <ul>           
         {data?.map((token) => (
           <li key={token.id}>
+            <div className="card grid size-auto mb-5 m-10 bg-sky-500">
             <strong>Address:</strong> {token.token_address},{" "}
             <strong>Balance:</strong> {token.balance}, <strong>ID:</strong>{" "}
             {token.id}
+            </div>
           </li>
         ))}
       </ul>
