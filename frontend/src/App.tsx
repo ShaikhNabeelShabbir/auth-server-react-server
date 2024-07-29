@@ -17,6 +17,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "@/components/ui/menubar"
+
 import { Input } from "@/components/ui/input"
 
 
@@ -87,19 +97,36 @@ const App: React.FC = () => {
             <Link to="/change-password">
               <Button>Change Password</Button>
             </Link>
+            <br />
+{/* change here */}
+<Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>Token Menu</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>
+          <Link to="/create-token">
+              Create Token
+            </Link> <MenubarShortcut>⌘T</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem>
+          <Link to="/view-tokens">
+              View Tokens
+            </Link>
+          </MenubarItem>
+          <MenubarItem>
+          <Link to="/delete-token">
+              Delete Token
+            </Link>
+          </MenubarItem>
+          <MenubarItem>
+          <Link to="/update-token">
+              Update Token
+            </Link>
+          </MenubarItem>
+          </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
 
-            <Link to="/create-token">
-              <Button>Create Token</Button>
-            </Link>
-            <Link to="/view-tokens">
-              <Button>View Tokens</Button>
-            </Link>
-            <Link to="/delete-token">
-              <Button>Delete Token</Button>
-            </Link>
-            <Link to="/update-token">
-              <Button>Update Token</Button>
-            </Link>
             </AccordionContent>
             </AccordionItem>
             </Accordion>
