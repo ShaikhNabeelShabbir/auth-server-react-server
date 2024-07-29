@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { signUp } from "../api/api"; // Import the API function
 import "../styles.css";
+import { Input } from "@/components/ui/input"
 
 interface SignUpProps {
   onRegisterSuccess: (user: { email: string; password: string }) => void;
@@ -57,25 +58,27 @@ const SignUp: React.FC<SignUpProps> = ({ onRegisterSuccess }) => {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Email:</label>
-          <input
+          <Input  placeholder="E-mail"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
+        <br />
         <div>
           <label>Password:</label>
-          <input
+          <Input  placeholder="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
+        <br />
         <div>
           <label>Confirm Password:</label>
-          <input
+          <Input  placeholder="Re-enter Password"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
