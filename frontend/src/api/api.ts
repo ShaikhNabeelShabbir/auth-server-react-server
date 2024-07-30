@@ -100,7 +100,9 @@ export const signUp = async (email: string, password: string): Promise<any> => {
 export const signIn = async (
   email: string,
   password: string
-): Promise<{ token: string }> => {
+): Promise<{
+  email: string; token: string 
+}> => {
   const response = await fetch("http://localhost:3000/auth/signin", {
     method: "POST",
     headers: {
