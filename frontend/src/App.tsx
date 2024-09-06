@@ -10,25 +10,20 @@ import DeleteToken from "./pages/DeleteToken";
 import UpdateToken from "./pages/UpdateToken"; // Import the new component
 import "./styles.css";
 import { Button } from "./components/ui/button";
-import { Badge } from "@/components/ui/badge"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
 import {
   Menubar,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
-} from "@/components/ui/menubar"
-import { Input } from "@/components/ui/input"
-import { SubmitHandler, useForm } from "react-hook-form";
-
+} from "@/components/ui/menubar";
 
 interface User {
   email: string;
@@ -81,54 +76,53 @@ const App: React.FC = () => {
   };
 
   return (
+    <div className="container text-xl w-full h-full p-8">
     <Router>
-      <div className="container text-xl">
         <h3>Welcome to the App</h3>
         {loggedIn ? (
           <>
-            <p>You are logged in as <br /><Badge variant="outline">{username}</Badge></p>
             <br />
             <Button onClick={handleLogout}>Logout</Button>
             <br />
             <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-            <AccordionTrigger>Options?</AccordionTrigger>
-            <AccordionContent>
-            <Link to="/change-password">
-              <Button>Change Password</Button>
-            </Link>
-            <br />
-{/* change here */}
-<Menubar>
-      <MenubarMenu>
-        <MenubarTrigger>Token Menu</MenubarTrigger>
-        <MenubarContent>
-          <MenubarItem>
-          <Link to="/create-token">
-              Create Token
-            </Link> <MenubarShortcut>⌘T</MenubarShortcut>
-          </MenubarItem>
-          <MenubarItem>
-          <Link to="/view-tokens">
-              View Tokens
-            </Link>
-          </MenubarItem>
-          <MenubarItem>
-          <Link to="/delete-token">
-              Delete Token
-            </Link>
-          </MenubarItem>
-          <MenubarItem>
-          <Link to="/update-token">
-              Update Token
-            </Link>
-          </MenubarItem>
-          </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
-
-            </AccordionContent>
-            </AccordionItem>
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Options?</AccordionTrigger>
+                <AccordionContent>
+                  <Link to="/change-password">
+                    <Button>Change Password</Button>
+                  </Link>
+                  <br />
+                  {/* change here */}
+                  <Menubar>
+                    <MenubarMenu>
+                      <MenubarTrigger>Token Menu</MenubarTrigger>
+                      <MenubarContent>
+                        <MenubarItem>
+                          <Link to="/create-token">
+                            Create Token
+                          </Link> 
+                          <MenubarShortcut>⌘T</MenubarShortcut>
+                        </MenubarItem>
+                        <MenubarItem>
+                          <Link to="/view-tokens">
+                            View Tokens
+                          </Link>
+                        </MenubarItem>
+                        <MenubarItem>
+                          <Link to="/delete-token">
+                            Delete Token
+                          </Link>
+                        </MenubarItem>
+                        <MenubarItem>
+                          <Link to="/update-token">
+                            Update Token
+                          </Link>
+                        </MenubarItem>
+                      </MenubarContent>
+                    </MenubarMenu>
+                  </Menubar>
+                </AccordionContent>
+              </AccordionItem>
             </Accordion>
           </>
         ) : (
@@ -143,7 +137,6 @@ const App: React.FC = () => {
             </Link>
           </>
         )}
-      </div>
       <Routes>
         {!loggedIn && (
           <>
@@ -169,6 +162,7 @@ const App: React.FC = () => {
         </Route>
       </Routes>
     </Router>
+    </div>
   );
 };
 

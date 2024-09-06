@@ -13,12 +13,12 @@ export const logInSchema = z.object({
 });
 
 export const createTokenSchema = z.object({
-  token_address: z.string(),
+  tokenAddress: z.string(),
   balance: z.number().positive(),
 });
 
 export const updateTokenSchema = z.object({
-  token_address: z.string(),
+  tokenAddress: z.string(),
   balance: z.number().positive(),
 });
 
